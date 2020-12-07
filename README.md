@@ -12,3 +12,8 @@ python3 run.py
 
 
 
+NOTE: This is Pre-Alpha Release. Development for stable alpha release is being done and this may work unstable at the moment.
+
+
+
+

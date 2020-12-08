@@ -12,22 +12,7 @@ from numpy import percentile
 import matplotlib.pyplot as plt
 import matplotlib.font_manager
 
-# Import all models
-from pyod.models.abod import ABOD
-from pyod.models.cblof import CBLOF
-from pyod.models.feature_bagging import FeatureBagging
 from pyod.models.hbos import HBOS
-from pyod.models.iforest import IForest
-from pyod.models.knn import KNN
-from pyod.models.lof import LOF
-from pyod.models.loci import LOCI
-from pyod.models.mcd import MCD
-from pyod.models.ocsvm import OCSVM
-from pyod.models.pca import PCA
-from pyod.models.sos import SOS
-from pyod.models.lscp import LSCP
-from pyod.models.cof import COF
-from pyod.models.sod import SOD
 
 client = pymongo.MongoClient("localhost", 27017)
 db = client.fortress
@@ -74,57 +59,9 @@ if not len(os.listdir(csv_folder)):
 random_state = 42
 # Define nine outlier detection tools to be compared
 classifiers = {
-    '(ABOD) Angle-based Outlier Detector':
-        ABOD(contamination=outliers_fraction),
-    '(CBLOF) Cluster-based Local Outlier Factor ':
-        CBLOF(contamination=outliers_fraction,
-              check_estimator=False, random_state=random_state),
-    'Feature Bagging':
-        FeatureBagging(LOF(n_neighbors=35),
-                       contamination=outliers_fraction,
-                       random_state=random_state),
     '(HBOS) Histogram-base Outlier Detection': HBOS(
-        contamination=outliers_fraction),
-    'Isolation Forest': IForest(contamination=outliers_fraction,
-                                random_state=random_state),
-    '(KNN) K Nearest Neighbors ': KNN(
-        contamination=outliers_fraction),
-    'Average KNN': KNN(method='mean',
-                       contamination=outliers_fraction),
-    # 'Median KNN': KNN(method='median',
-    #                   contamination=outliers_fraction),
-    '(LOF) Local Outlier Factor ':
-        LOF(n_neighbors=35, contamination=outliers_fraction),
-    # 'Local Correlation Integral (LOCI)':
-    #     LOCI(contamination=outliers_fraction),
-    '(MCD) Minimum Covariance Determinant ': MCD(
-        contamination=outliers_fraction, random_state=random_state),
-    'One-class SVM (OCSVM)': OCSVM(contamination=outliers_fraction),
-    '(PCA) Principal Component Analysis ': PCA(
-        contamination=outliers_fraction, random_state=random_state),
-    # 'Stochastic Outlier Selection (SOS)': SOS(
-    #     contamination=outliers_fraction),
-    '(LSCP) Locally Selective Combination ': LSCP(
-        detector_list, contamination=outliers_fraction,
-        random_state=random_state),
-    # 'Connectivity-Based Outlier Factor (COF)':
-    #     COF(n_neighbors=35, contamination=outliers_fraction),
-    # 'Subspace Outlier Detection (SOD)':
-    #     SOD(contamination=outliers_fraction),
+        contamination=outliers_fraction)
 }
-st.subheader('SELECT AN ALGORITHM:')
-
-classifier_name = st.selectbox('THE ALGORITHM',[*classifiers])
-
-# Show all detectors
-st.subheader(f'Model is: {classifier_name}')
-st.write(f'Parameters are: {classifiers[classifier_name]}')
-
-# Fit the models with the generated data and
-# compare model performances
-
-# Fit the model
-fig = plt.figure(figsize=(15, 12))
 
 
 def predict_for_classifier(classifier_name):

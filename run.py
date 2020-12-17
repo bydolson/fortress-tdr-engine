@@ -17,7 +17,8 @@ import pdb
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
-WEB3_INFURA_PROJECT_ID = config.get("myvars", "WEB3_INFURA_PROJECT_ID")
+WEB3_INFURA_PROJECT_ID = config.get("variables", "WEB3_INFURA_PROJECT_ID")
+PRIVATE_KEY = config.get("variables", "PRIVATE_KEY")
 client = pymongo.MongoClient("localhost", 27017)
 behavior_time_window = 100
 
@@ -61,6 +62,12 @@ def detect_anomaly(change_array):
 
     return df_sorted
 
+def build_transaction(contract_address):
+  tx = greeter.functions.greet("stopEvent").buildTransaction({'nonce': w3.eth.getTransactionCount(contract_address)})
+  signed_tx = w3.eth.account.signTransaction(tx, private_key=PRIVATE_KEY)
+  web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+  print(contract_address + ' event stopped') #fix-add better logs
+
 if __name__ == '__main__':
   change_stream = client.changestream.collection.watch()
   change_array = []
@@ -73,8 +80,8 @@ if __name__ == '__main__':
       if index % behavior_time_window == 0:
         score = detect_anomaly(change_array)
         if score > 0.50:
-          #stop event - update java connection.
+          build_transaction(change['contract_address'])
       if change['type'] == "event" and change['operation'] == "write":
         threat_detected = analyse_for_audit(change)
         if threat_detected:
-          #stop event - update java connection.
+          build_transaction(change['contract_address'])

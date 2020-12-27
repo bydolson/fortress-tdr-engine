@@ -10,7 +10,7 @@ import ConfigParser
 
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
-WEB3_INFURA_PROJECT_ID = config.get("myvars", "WEB3_INFURA_PROJECT_ID")
+WEB3_INFURA_PROJECT_ID = config.get("myvars", "addprojectid")
 
 client = pymongo.MongoClient("localhost", 27017)
 change_stream = client.changestream.collection.watch()
